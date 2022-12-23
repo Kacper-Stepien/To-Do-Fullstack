@@ -1,0 +1,65 @@
+/* Imports */
+/* 'Lato' - 300, 400, 700 ⬇️*/
+@import url('https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap');
+/* 'Secular One' - 400 */
+@import url('https://fonts.googleapis.com/css2?family=Secular+One&display=swap');
+
+/* Variables */
+:root {
+    --dark-blue-1: #03045e;
+    --dark-blue-2: #023e8a;
+    --light-blue-1: #0077b6;
+    --white-1: #ffffff;
+    --white-2: #edf6f9;
+    --dark-gray-1: #212529;
+    --dark-gray-2: #343a40;
+    --dark-gray-3: #495057;
+    --light-gray-1: #6c757d;
+    --light-gray-2: #adb5bd;
+}
+
+/* Default settings */
+html {
+    box-sizing: border-box;
+    font-size: 62.5%;
+    font-family: 'Lato', sans-serif;
+    scroll-behavior: smooth;
+}
+
+*,
+*::before,
+*::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: inherit;
+}
+
+.btn,
+.btn:link,
+.btn:visited {
+    display: inline-block;
+    padding: 1.5rem 4rem;
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+/* Scrollbar */
+body::-webkit-scrollbar {
+    width: 1.2rem;
+    /* width of the entire scrollbar */
+}
+
+
+body::-webkit-scrollbar-track {
+    background: var(--light-gray-2);
+    /* color of the tracking area */
+}
+
+body::-webkit-scrollbar-thumb {
+    background-color: var(--dark-blue-2);
+    /* color of the scroll thumb */
+    /* border-radius: 20px; */
+    /* roundness of the scroll thumb */
+    /* creates padding around scroll thumb */
+}
