@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="pl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/login.css">
+    <link rel="icon" type="image/x-icon" href="img/favicon.ico">
+    <script defer src="https://kit.fontawesome.com/8c4bd008c3.js" crossorigin="anonymous"></script>
+    <title>To Do - Login</title>
+</head>
+
+<body>
+    <nav class="main-nav">
+        <div class="main-nav__logo">
+            <i class="fa-solid fa-circle-check"></i>
+            <p class="logo-text">To Do</p>
+        </div>
+        <a class="btn go-next" href="/">Home Page</a>
+    </nav>
+    <main>
+        <!-- Login form -->
+        <form action="app.html" id="login-form">
+            <h1>Logowanie</h1>
+            <div class="inputs">
+                <div class="inputfield">
+                    <label for="login">Login:</label>
+                    <input class="input" type="text" id="login" autofocus>
+                    <div class="error login-error"></div>
+                </div>
+
+                <div class="inputfield">
+                    <label for="password">Hasło:</label>
+                    <input class="input" type="password" id="password">
+                    <div class="error password-error"></div>
+                </div>
+            </div>
+            <button class="btn btn-submit" type="submit">Logi In</button>
+            <p class="form-text">
+                <a href="/register" class="form-link" id="create-account">Nie posiadasz konta? Stwórz je teraz</a>
+            </p>
+        </form>
+    </main>
+    <script defer src="https://kit.fontawesome.com/8c4bd008c3.js" crossorigin="anonymous"></script>
+</body>
+
+</html>

@@ -18,26 +18,26 @@
             <i class="fa-solid fa-circle-check"></i>
             <p class="logo-text">To Do</p>
         </div>
-        <a class="btn go-next" href="/">Wróć na stronę główną</a>
+        <a class="btn go-next" href="/">Home Page</a>
     </nav>
     <main>
 
         <!-- Create account form-->
         <form id="create-account-form">
-            <h1>Rejestracja</h1>
+            <h1>Registration</h1>
             <div class="inputs">
                 <div class="inputfield">
-                    <label for="name">Imię:</label>
+                    <label for="name">Name:</label>
                     <input class="input" type="text" id="name">
                     <div class="error name-error"></div>
                 </div>
                 <div class="inputfield">
-                    <label for="surname">Nazwisko:</label>
+                    <label for="surname">Surname:</label>
                     <input class="input" type="text" id="surname">
                     <div class="error surname-error"></div>
                 </div>
                 <div class="inputfield">
-                    <label for="age">Wiek:</label>
+                    <label for="age">Age:</label>
                     <input class="input" type="number" id="age" min="6" max="120">
                     <div class="error age-error"></div>
                 </div>
@@ -47,19 +47,19 @@
                     <div class="error login-1-error"></div>
                 </div>
                 <div class="inputfield">
-                    <label for="password-1">Hasło:</label>
+                    <label for="password-1">Password:</label>
                     <input class="input" type="password" id="password-1">
                     <div class="error password-1-error"></div>
                 </div>
                 <div class="inputfield">
-                    <label for="password-2">Powtórz hasło:</label>
+                    <label for="password-2">Repeat password:</label>
                     <input class="input" type="password" id="password-2">
                     <div class="error password-2-error"></div>
                 </div>
             </div>
-            <button class="btn btn-submit" type="submit">Zarejestruj się</button>
+            <button class="btn btn-submit" type="submit">Register</button>
             <p class="form-text">
-                <a class="form-link" id="log-in">Posiadasz już konto? Zaloguj się teraz</a>
+                <a href="/login" class="form-link" id="log-in">Already have an account? Login now</a>
             </p>
         </form>
     </main>

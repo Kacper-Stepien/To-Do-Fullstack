@@ -11,11 +11,15 @@ app.use('/views', express.static(__dirname + '/views'));
 
 
 app.get('/', (req, res) => {
-    res.send('Hello Express');
+    res.sendFile(__dirname + 'public/index.html');
 });
 
 app.get('/register', (req, res) => {
     res.sendFile(__dirname + '/views/register.html');
+});
+
+app.get('/login', (req, res) => {
+    res.sendFile(__dirname + '/views/login.html');
 });
 
 app.listen(port, () => {
