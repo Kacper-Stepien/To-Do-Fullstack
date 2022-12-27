@@ -36,8 +36,7 @@ body {
 main {
     max-width: 80rem;
     width: 100%;
-    min-height: 80vh;
-    padding: 4rem;
+    padding: 6rem 2rem;
     background-color: var(--white-2);
     border-radius: 8px;
     box-shadow: 0px 30px 40px rgba(0, 0, 0, .3);

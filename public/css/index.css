@@ -135,13 +135,15 @@ footer {
 footer #link-to-contact {
     display: inline-block;
     text-decoration: none;
+    font-style: normal;
     font-family: 'Lato', sans-serif;
-    transition: all .2s;
-    padding: 1rem .6rem;
-    border-radius: 8px;
+    transition: all .1s;
 }
 
 footer #link-to-contact:hover {
+    margin: 0 0.4rem;
+    padding: 1rem .6rem;
+    border-radius: 8px;
     transform: translateY(-4px) scale(1.1);
     background-color: var(--dark-blue-2);
     cursor: pointer;
