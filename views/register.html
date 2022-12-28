@@ -59,11 +59,17 @@
                     <div class="error password-2-error"></div>
                 </div>
             </div>
-            <button class="btn btn-submit" type="submit">Register</button>
+            <button class="btn btn-submit" type="submit">Zarejestruj</button>
             <p class=" form-text">
-                <a href="/login" class="form-link" id="log-in">Already have an account? Login now</a>
+                <a href="/login" class="form-link" id="log-in">Posiadasz już konto? Zaloguj się teraz</a>
             </p>
         </form>
+        <div class="modal hidden" id="register-modal">
+            <button class="close-modal">&times;</button>
+            <h2 class="modal-title" id="register-modal-title">Wystąpił błąd po stronie serwera</h2>
+            <p class="modal-text" id="register-modal-text">Spróbuj ponownie później</p>
+        </div>
+        <div class="overflow hidden"></div>
     </main>
 </body>
 

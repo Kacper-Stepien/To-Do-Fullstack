@@ -11,13 +11,54 @@ const password1 = document.querySelector('#password-1');
 const password1Error = document.querySelector('.password-1-error');
 const password2 = document.querySelector('#password-2');
 const password2Error = document.querySelector('.password-2-error');
+const modal = document.getElementById("register-modal");
+const modalTitle = document.getElementById("register-modal-title");
+const modalText = document.getElementById("register-modal-text");
+const closeModalBtn = document.querySelector('.close-modal');
+const overflow = document.querySelector('.overflow');
 
 const loginRegex = /[A-ZĄĆĘŁŃÓŚŻŹa-ząćęłńóśżź0-9]{5,20}/;
 const nameRegex = /^[A-ZŁŚ][a-złóśćąęń]{1,20}(\s[A-ZŁŚ][a-złóśćąęń]{1,20})?$/;
-const surnameRegex = /^[A-ZŁŚ][a-złóśćąęń]{1,20}(-[A-ZŁŚ][a-złóśćąęń]{1,20})?$/;
+const surnameRegex = /^[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]{1,20}(-[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]{1,20})?$/;
 const emailRegex = /^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-]+)(\.[a-zA-Z]{2,5}){1,2}$/;
 const passwordRegex = /.{8,}/;
 
+
+const openModal = (modal, title, text, overflow) => {
+    modalTitle.innerHTML = title;
+    modalText.innerHTML = text;
+    modal.classList.remove('hidden');
+    overflow.classList.remove('hidden');
+    document.body.style.overflow = "hidden";
+
+    closeModalBtn.addEventListener('click', () => {
+        modalTitle.innerHTML = "";
+        modalText.innerHTML = "";
+        modal.classList.add('hidden');
+        overflow.classList.add('hidden');
+        document.body.style.overflow = "auto";
+
+        if (title == "Sukces") {
+            clearErrors();
+            createForm.reset();
+            window.location.href = "http://localhost:8000/login";
+        }
+    });
+
+    overflow.addEventListener('click', () => {
+        modalTitle.innerHTML = "";
+        modalText.innerHTML = "";
+        modal.classList.add('hidden');
+        overflow.classList.add('hidden');
+        document.body.style.overflow = "auto";
+
+        if (title == "Sukces") {
+            clearErrors();
+            createForm.reset();
+            window.location.href = "http://localhost:8000/login";
+        }
+    });
+}
 
 // Functions for validation 
 function checkInput(inputObject, regex) {
@@ -54,6 +95,13 @@ function validateRegisterForm() {
         nameError.innerHTML = "Wpisz poprawne imię, jeśli masz dwa imiona odziel je spacją";
     }
     else nameError.innerHTML = "";
+
+    // Check surname:
+    if (!checkInput(surname, surnameRegex)) {
+        sendForm = false;
+        surnameError.innerHTML = "Wpisz poprawne nazwisko, jeśli nazwisko jest dwuczłonowe odziel je myślnikiem";
+    }
+    else surnameError.innerHTML = "";
 
     // Check login
     if (!checkInput(login1, loginRegex)) {
@@ -104,13 +152,11 @@ function validateRegisterForm() {
 
 
 createForm.addEventListener('submit', async (e) => {
+
     e.preventDefault();
     let sendForm = validateRegisterForm();
 
-    if (!sendForm) {
-        console.log("zle");
-    }
-    else {
+    if (sendForm) {
         let user = {
             login: login1.value,
             password: password1.value,
@@ -118,7 +164,6 @@ createForm.addEventListener('submit', async (e) => {
             name: namee.value,
             surname: surname.value,
         };
-        console.log("dobre");
 
         const response = await fetch("http://localhost:8000/create-user", {
             method: "post",
@@ -128,11 +173,25 @@ createForm.addEventListener('submit', async (e) => {
             }
         });
 
-
         console.log(response);
-        const json = await response.json();
-        console.log(json);
-        // createForm.reset();
+        const data = await response.json();
+        console.log(data);
+        if (data.message == "Login is not available") {
+            login1Error.innerHTML = "Login zajęty";
+        }
+        else if (data.message == "Email is already taken") {
+            emailError.innerHTML = "Istnieje już konto z takim emailem";
+        }
+        else if (data.message == "Internal server error") {
+            openModal(modal, "Błąd", "Wystąpił wewnętrzny błąd po stronie serwera, spróbuj ponownie", overflow);
+        }
+        else if (data.message == "Wrong data") {
+            openModal(modal, "Błąd", "Dane przesłane na serwer są niepoprawne", overflow);
+        }
+        if (data.status == "ok") {
+            openModal(modal, "Sukces", "Konto zostało utworzone, możesz się zalogować", overflow);
+        }
 
     }
 });
+

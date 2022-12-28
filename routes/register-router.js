@@ -50,21 +50,6 @@ const validateData = (data) => {
     let email = escapeHtml(data.email);
     let password = escapeHtml(data.password);
 
-    // Check login
-    if (!checkInput(login, loginRegex)) {
-        console.log(dataValid);
-        return false;
-    }
-    try {
-        const results = db.query("SELECT * FROM users WHERE login = ?", [login]);
-        if (results.length > 0) {
-            return 'wrongLogin';
-        }
-    }
-    catch (error) {
-        return 'databaseError';
-    }
-
     // Check name
     if (!checkInput(name, nameRegex)) {
         return false;
@@ -73,6 +58,22 @@ const validateData = (data) => {
     // Check surname
     if (!checkInput(surname, surnameRegex)) {
         return false;
+    }
+
+    // Check login
+    if (!checkInput(login, loginRegex)) {
+        console.log(dataValid);
+        return false;
+    }
+
+    try {
+        const results = db.query("SELECT * FROM users WHERE login = ?", [login]);
+        if (results.length > 0) {
+            return 'wrongLogin';
+        }
+    }
+    catch (error) {
+        return 'databaseError';
     }
 
     // Check email
@@ -100,19 +101,19 @@ const validateData = (data) => {
 
 
 router.post("/", (request, response) => {
-    let dataOk = validateData(request.body);
+    let status = validateData(request.body);
 
-    if (dataOk == 'databaseError') {
+    if (status == 'databaseError') {
         console.log("database error");
         response.status(500).json({ status: "error", message: "Internal server error" });
     }
-    else if (dataOk == 'wrongLogin') {
+    else if (status == 'wrongLogin') {
         response.status(401).json({ status: "error", message: "Login is not available" });
     }
-    else if (dataOk == 'wrongEmail') {
+    else if (status == 'wrongEmail') {
         response.status(401).json({ status: "error", message: "Email is already taken" });
     }
-    else if (dataOk == false) {
+    else if (status == false) {
         response.status(401).json({ status: "error", message: "Wrong data" });
     }
     else {
