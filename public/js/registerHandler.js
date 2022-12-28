@@ -5,6 +5,8 @@ const surname = document.querySelector('#surname');
 const surnameError = document.querySelector('.surname-error');
 const login1 = document.querySelector('#login-1');
 const login1Error = document.querySelector('.login-1-error');
+const email = document.querySelector('#email');
+const emailError = document.querySelector('.email-error');
 const password1 = document.querySelector('#password-1');
 const password1Error = document.querySelector('.password-1-error');
 const password2 = document.querySelector('#password-2');
@@ -13,6 +15,7 @@ const password2Error = document.querySelector('.password-2-error');
 const loginRegex = /[A-ZĄĆĘŁŃÓŚŻŹa-ząćęłńóśżź0-9]{5,20}/;
 const nameRegex = /^[A-ZŁŚ][a-złóśćąęń]{1,20}(\s[A-ZŁŚ][a-złóśćąęń]{1,20})?$/;
 const surnameRegex = /^[A-ZŁŚ][a-złóśćąęń]{1,20}(-[A-ZŁŚ][a-złóśćąęń]{1,20})?$/;
+const emailRegex = /^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-]+)(\.[a-zA-Z]{2,5}){1,2}$/;
 const passwordRegex = /.{8,}/;
 
 
@@ -42,8 +45,7 @@ function clearErrors() {
     });
 }
 
-createForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
+function validateRegisterForm() {
     let sendForm = true;
 
     // Check name:
@@ -53,24 +55,22 @@ createForm.addEventListener('submit', async (e) => {
     }
     else nameError.innerHTML = "";
 
-    // Check surname:
-    if (!checkInput(surname, surnameRegex)) {
-        sendForm = false;
-        surnameError.innerHTML = "Wpisz poprawne nazwisko, jeśli jest dwuczłonowe odziel je myślnikiem";
-    }
-    else surnameError.innerHTML = "";
-
     // Check login
     if (!checkInput(login1, loginRegex)) {
         sendForm = false;
         login1Error.innerHTML = "Wpisz poprawny login, zawiera litery i cyfry, 5-20 znaków";
     }
-    else if (localStorage.getItem(login1.value) !== null) {
-        sendForm = false;
-        login1Error.innerHTML = "Użytkownik o podanym loginie już istnieje";
-    }
     else {
         login1Error.innerHTML = "";
+    }
+
+    // Check email
+    if (!checkInput(email, emailRegex)) {
+        sendForm = false;
+        emailError.innerHTML = "Wpisz poprawny email";
+    }
+    else {
+        emailError.innerHTML = "";
     }
 
     // Check password 
@@ -99,6 +99,14 @@ createForm.addEventListener('submit', async (e) => {
         password2Error.innerHTML = "";
     }
 
+    return sendForm;
+}
+
+
+createForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    let sendForm = validateRegisterForm();
+
     if (!sendForm) {
         console.log("zle");
     }
@@ -106,10 +114,10 @@ createForm.addEventListener('submit', async (e) => {
         let user = {
             login: login1.value,
             password: password1.value,
+            email: email.value,
             name: namee.value,
             surname: surname.value,
         };
-        var data = new FormData(createForm);
         console.log("dobre");
 
         const response = await fetch("http://localhost:8000/create-user", {
@@ -120,6 +128,11 @@ createForm.addEventListener('submit', async (e) => {
             }
         });
 
+
         console.log(response);
+        const json = await response.json();
+        console.log(json);
+        // createForm.reset();
+
     }
 });
