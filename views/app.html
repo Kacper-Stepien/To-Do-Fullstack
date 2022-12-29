@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="pl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/app.css">
+    <script defer src="js/app-handler.js"></script>
+    <link rel="icon" type="image/x-icon" href="img/favicon.ico">
+    <title>To Do</title>
+</head>
+
+<body>
+    <main>
+        <nav class="main-nav">
+            <div class="main-nav__logo">
+                <i class="fa-solid fa-circle-check"></i>
+                <p class="logo-text">To Do</p>
+            </div>
+            <a id="logout-btn" class="btn go-next" href="login.html">Wyloguj</a>
+        </nav>
+        <div class="main-section">
+            <aside class="user-section">
+                <i class="fa-solid fa-user"></i>
+                <div class="user-login"></div>
+                <div class="user-name"></div>
+                <div class="progress">
+                    <div class="progress-bar" role="progressbar" style="width: 70%" aria-valuenow="50" aria-valuemin="0"
+                        aria-valuemax="100"></div>
+                </div>
+                <div class="tasks-progress">
+                    <div class="task-progress">
+                        <div class="number completed"></div>
+                        <div class="label">Ukończone</div>
+                    </div>
+                    <div class="task-progress">
+                        <div class="number uncomplited"></div>
+                        <div class="label">W trakcie</div>
+                    </div>
+                    <div class="task-progress">
+                        <div class="number all"></div>
+                        <div class="label">Wszystkie</div>
+                    </div>
+                </div>
+            </aside>
+
+            <div class="tasks-sesction">
+                <div class="task-section-header">
+                    <h2>Lista zadań</h2>
+                    <div class="task-section-buttons">
+                        <button id="add-task-btn" class="btn addTaskBtn"><i class="fa-solid fa-plus"></i></button>
+                        <button id="delete-all-tasks-btn" class="btn deleteAllTaskBtn"><i
+                                class="fa-solid fa-trash-can"></i></button>
+                    </div>
+                </div>
+
+                <div class="tasks-unfinished">
+                    <!-- Place for unfinished tasks -->
+                    <!-- <div class="task task-unfinished">
+                        <button class="btn taskBtn addBtn"><i class="fa-solid fa-check"></i></button>
+                        <button class="btn taskBtn modifyBtn"><i class="fa-solid fa-gear"></i></button>
+                        <button class="btn taskBtn deleteBtn"><i class="fa-solid fa-trash-can"></i></button>
+                        <div class="task-info">
+                            <div class="task-title">Zrób projekt</div>
+                            <div class="task-dates">
+                                <div class="task-date">10.05.2022</div>
+                                <div class="task-last-edit">12.05.2022</div>
+                            </div>
+                        </div>
+                    </div> -->
+                </div>
+
+                <div class="task-section-header">
+                    <h2>Ukończone</h2>
+                </div>
+
+                <div class="tasks-finished">
+                    <!-- Place for finished tasks -->
+                    <!-- <div class="task task-finished">
+                        <button class="btn taskBtn deleteBtn"><i class="fa-solid fa-trash-can"></i></button>
+                        <div class="task-info">
+                            <div class="task-title">Sprawozdanie na technikę cyfrową</div>
+                            <div class="task-dates">
+                                <div class="task-date">10.05.2022</div>
+                                <div class="task-finish-date">12.05.2022</div>
+                            </div>
+                        </div> -->
+                </div>
+
+
+            </div>
+            <div class="task-info-section">
+                <div class="task-info-section-title">...</div>
+                <div class="task-info-section-date"></div>
+                <div class="task-info-section-description hidden">
+                </div>
+            </div>
+        </div>
+
+        <!-- Hidden modals which appear after something happens -->
+        <div id="error-modal" class="modal error-modal hidden">
+            <button id="close-error-modal" class="close-modal">&times;</button>
+            <h2 class="error-modal-title" id="error-modal-title">Wystąpił błąd po stronie serwera</h2>
+            <p class="error-modal-text" id="error-modal-text">Spróbuj ponownie później</p>
+        </div>
+
+        <div id="add-task-modal" class="modal add-task-modal hidden">
+            <button id="close-add-task-modal" class="close-modal">&times;</button>
+            <h1>Dodawanie nowego zadania</h1>
+            <p id="add-task-modal--empty-title-error" class="empty-title-error"></p>
+            <input id="add-task-modal--title" type="text" class="add-task-modal--title" placeholder="Tytuł zadania">
+            <textarea id="add-task-modal--text" name="#" placeholder="Opis zadania..." cols="30" rows="10"
+                class="add-task-modal--text"></textarea>
+            <label for="add-task-modal--priority">Priorytet:</label>
+            <select id="add-task-modal--priority" class="add-task-modal--priority">
+                <option value="low">Niski</option>
+                <option value="middle">Średni</option>
+                <option value="high">Wysoki</option>
+            </select>
+            <button id="add-task-modal--btn" class="btn add-task-modal--btn">Dodaj zadanie</button>
+        </div>
+
+        <div id="modify-task-modal" class="modal modify-task-modal hidden">
+            <button id="close-modify-task-modal" class="close-modal">&times;</button>
+            <h1>Edytuj zadanie</h1>
+            <input type="text" id="modify-task-modal--title" class="modify-task-modal--title"
+                placeholder="Tytuł zadania">
+            <textarea id="modify-task-modal--text" name="#" placeholder="Opis zadania..." cols="30" rows="10"
+                class="modify-task-modal--text"></textarea>
+            <button id="modify-task-modal--btn" class="btn modify-task-modal--btn">Zatwierdź</button>
+        </div>
+
+        <div class="overflow hidden"></div>
+
+        <div class="page-error hidden">
+            <h3>Nie jestes zalogowany, aby korzystać z aplikacji musisz się zalogować.</h3>
+            <div class="btn go-to-log-in"><a href="login.html">Przejdź do logowania</a></div>
+        </div>
+
+
+        <footer>
+            <p>© 2022 <em id="link-to-contact">Kacper Stępień</em>. Wszystkie prawa zastrzeżone.</p>
+        </footer>
+
+    </main>
+    <script defer src="https://kit.fontawesome.com/8c4bd008c3.js" crossorigin="anonymous"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+        crossorigin="anonymous"></script>
+    <!-- <script defer src="js/modal-add-task.js"></script>
+    <script defer src="js/app-service.js"></script>
+    <script defer src="js/go-to-contact.js"></script>
+    <script defer src="js/go-to-main-page.js"></script> -->
+</body>
+
+</html>

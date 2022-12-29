@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="css/login.css">
     <link rel="icon" type="image/x-icon" href="img/favicon.ico">
     <script defer src="https://kit.fontawesome.com/8c4bd008c3.js" crossorigin="anonymous"></script>
+    <script defer src="js/login-form-handler.js"></script>
     <title>To Do - Login</title>
 </head>
 
@@ -21,7 +22,7 @@
     </nav>
     <main>
         <!-- Login form -->
-        <form action="app.html" id="login-form">
+        <form id="login-form">
             <h1>Logowanie</h1>
             <div class="inputs">
                 <div class="inputfield">
@@ -42,6 +43,12 @@
                     teraz</a>
             </p>
         </form>
+        <div class="modal hidden" id="register-modal">
+            <button class="close-modal">&times;</button>
+            <h2 class="modal-title" id="register-modal-title">Wystąpił błąd po stronie serwera</h2>
+            <p class="modal-text" id="register-modal-text">Spróbuj ponownie później</p>
+        </div>
+        <div class="overflow hidden"></div>
     </main>
     <script defer src="https://kit.fontawesome.com/8c4bd008c3.js" crossorigin="anonymous"></script>
 </body>
