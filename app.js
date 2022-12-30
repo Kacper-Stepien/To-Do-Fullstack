@@ -21,6 +21,7 @@ const port = process.env.PORT;
 app.use(express.static('public'));  // Dzięki temu możemy używać plików statycznych z folderu public
 app.use("/js", express.static(__dirname + "/public/js"));
 app.use('/css', express.static(__dirname + '/public/css'));
+app.use('/img', express.static(__dirname + '/public/img'));
 app.use('/views', express.static(__dirname + '/views'));
 app.use('/routes', express.static(__dirname + '/routes'));
 

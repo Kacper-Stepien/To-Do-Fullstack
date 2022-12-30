@@ -6,8 +6,10 @@ const cookieParser = require("cookie-parser");
 
 router.post("/", (request, response) => {
     let taskId = request.body.idtask;
+    let modifyDate = request.body.modifyDate;
+    console.log(taskId);
     try {
-        db.query("UPDATE tasks SET finished = 1 WHERE idtask = ?", [taskId]);
+        db.query("UPDATE tasks SET finished = 1, last_modify_date = ? WHERE idtask = ?", [modifyDate, taskId]);
         response.status(200).json({ status: "ok", message: "Task updated" });
     }
     catch (error) {

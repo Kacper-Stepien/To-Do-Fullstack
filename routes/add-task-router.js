@@ -19,8 +19,8 @@ router.post("/", (request, response) => {
             let finished = request.body.finished;
             let date_added = request.body.date_added;
 
-            let sql = `INSERT INTO tasks(title, description, priority, finished, user_id) VALUES(?, ?, ?, ?, ?)`;
-            db.query(sql, [title, description, priority, finished, user_id]);
+            let sql = `INSERT INTO tasks(title, description, priority, finished, user_id, added_date) VALUES(?, ?, ?, ?, ?, ?)`;
+            db.query(sql, [title, description, priority, finished, user_id, date_added]);
 
             response.status(200).json({ status: "ok", message: "Task added" });
         }

@@ -10,8 +10,9 @@ router.post("/", (request, response) => {
         let title = request.body.title;
         let description = request.body.description;
         let priority = request.body.priority;
+        let modifyDate = request.body.modifyDate;
 
-        db.query("UPDATE tasks SET title = ?, description = ?, priority = ? WHERE idtask = ?", [title, description, priority, taskId]);
+        db.query("UPDATE tasks SET title = ?, description = ?, priority = ?, last_modify_date = ? WHERE idtask = ?", [title, description, priority, modifyDate, taskId]);
         response.status(200).json({ status: "ok", message: "Task modified" });
     }
     catch (error) {
