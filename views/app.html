@@ -126,10 +126,16 @@
         <div id="modify-task-modal" class="modal modify-task-modal hidden">
             <button id="close-modify-task-modal" class="close-modal">&times;</button>
             <h1>Edytuj zadanie</h1>
+            <p id="modify-task-modal--empty-title-error" class="empty-title-error"></p>
             <input type="text" id="modify-task-modal--title" class="modify-task-modal--title"
                 placeholder="Tytuł zadania">
             <textarea id="modify-task-modal--text" name="#" placeholder="Opis zadania..." cols="30" rows="10"
                 class="modify-task-modal--text"></textarea>
+            <select id="modify-task-modal--priority" class="modify-task-modal--priority">
+                <option value="low">Niski</option>
+                <option value="middle">Średni</option>
+                <option value="high">Wysoki</option>
+            </select>
             <button id="modify-task-modal--btn" class="btn modify-task-modal--btn">Zatwierdź</button>
         </div>
 

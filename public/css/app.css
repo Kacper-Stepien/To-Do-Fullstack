@@ -420,7 +420,8 @@ body {
     text-align: start;
 }
 
-.add-task-modal--priority {
+.add-task-modal--priority,
+.modify-task-modal--priority {
     outline: none;
     border: none;
     padding: 1rem;

@@ -12,6 +12,9 @@ const loggedInRouter = require('./routes/user-logged-in-router');
 const logoutRouter = require('./routes/logout-router');
 const userInfoRouter = require('./routes/user-info-router');
 const addTaskRouter = require('./routes/add-task-router');
+const checkTaskAsDoneRouter = require('./routes/check-task-as-done-router');
+const deleteTaskRouter = require('./routes/delete-task-router');
+const modifyTaskRouter = require('./routes/edit-task-router');
 
 const app = express();
 const port = process.env.PORT;
@@ -63,6 +66,11 @@ app.use('/user-info', userInfoRouter);
 
 app.use('/add-task', addTaskRouter);
 
+app.use('/check-task-as-done', checkTaskAsDoneRouter);
+
+app.use('/delete-task', deleteTaskRouter);
+
+app.use('/modify-task', modifyTaskRouter);
 
 app.listen(port, () => {
     console.log(`Server is up on port ${port}`);

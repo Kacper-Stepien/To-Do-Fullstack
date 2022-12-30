@@ -44,8 +44,10 @@ const addTaskModalConfirmBtn = document.getElementById('add-task-modal--btn');
 
 const modifyTaskModal = document.getElementById('modify-task-modal');
 const modifyTaskModalCloseBtn = document.getElementById('close-modify-task-modal');
+const modifyTaskModalError = document.getElementById('modify-task-modal--empty-title-error');
 const modifyTaskModalTitle = document.getElementById('modify-task-modal--title');
 const modifyTaskModalDescription = document.getElementById('modify-task-modal--text');
+const modifyTaskModalPriority = document.getElementById('modify-task-modal--priority');
 const modifyTaskModalConfirmBtn = document.getElementById('modify-task-modal--btn');
 
 const overflow = document.querySelector('.overflow');
@@ -60,6 +62,7 @@ function openErrorModal(title, description) {
     errorModalDescription.innerText = description;
     errorModal.classList.remove('hidden');
     overflow.classList.remove('hidden');
+    document.body.style.overflow = "hidden";
 }
 
 // Function get data about user and his tasks from database - return object with user data and tasks data
@@ -101,7 +104,7 @@ const displayTasksUncompleted = (data) => {
     else {
         for (let i = 0; i < tasks.length; i++) {
             let priority = tasks[i].priority;
-            let task = `<div class="task task-unfinished ${priority}" data-taskid="${tasks[i].idtask}" data-description="${tasks[i].description}">` +
+            let task = `<div class="task task-unfinished ${priority}" data-taskid="${tasks[i].idtask}" data-description="${tasks[i].description}" data-priority="${tasks[i].priority}">` +
                 `<button class="btn taskBtn addBtn"> <i class="fa-solid fa-check"></i></button>` +
                 `<button class="btn taskBtn modifyBtn"> <i class="fa-solid fa-gear"></i></button >` +
                 `<button class="btn taskBtn deleteBtn"> <i class="fa-solid fa-trash-can"></i></button>` +
@@ -179,11 +182,125 @@ const addTask = async () => {
     }
 }
 
+const checkTaskAsDone = async (taskId) => {
+    try {
+        let task = {
+            idtask: taskId
+        }
+        console.log(task);
+        const result = await fetch("http://localhost:8000/check-task-as-done", {
+            method: "post",
+            body: JSON.stringify(task),
+            headers: {
+                "Content-Type": "application/json"
+            }
+        });
 
+        const data = await result.json();
+        if (data.status === "ok") {
+            window.location.reload();
+        }
+        else {
+            openErrorModal("Błąd", "Nie udało się oznaczyć zadania jako ukończone");
+        }
+    }
+    catch (err) {
+        openErrorModal("Błąd", "Nie udało się oznaczyć zadania jako ukończone");
+    }
+}
 
+const deleteTask = async (taskId) => {
+    try {
+        const result = await fetch("http://localhost:8000/delete-task", {
+            method: "post",
+            body: JSON.stringify({ idtask: taskId }),
+            headers: {
+                "Content-Type": "application/json"
+            }
+        });
+        const data = await result.json();
+        if (data.status === "ok") {
+            window.location.reload();
+        }
+        else {
+            openErrorModal("Błąd", "Nie udało się usunąć zadania");
+        }
+    }
+    catch (error) {
+        openErrorModal("Błąd", "Nie udało się usunąć zadania");
+    }
+}
 
+const openModifyTaskModal = (div) => {
+    let taskId = div.dataset.taskid;
+    let title = div.querySelector(".task-title").innerText;
+    let description = div.dataset.description;
+    let priority = div.dataset.priority;
 
+    modifyTaskModalTitle.value = title;
+    if (description === "" || description === "null")
+        modifyTaskModalDescription.value = "";
+    else
+        modifyTaskModalDescription.value = description;
+    modifyTaskModalPriority.value = priority;
+    modifyTaskModal.classList.remove('hidden');
+    overflow.classList.remove('hidden');
+    document.body.style.overflow = "hidden";
 
+    modifyTaskModalConfirmBtn.addEventListener('click', async () => {
+        let newTitle = modifyTaskModalTitle.value;
+        let newDescription = modifyTaskModalDescription.value;
+        let newPriority = modifyTaskModalPriority.value;
+
+        if (newTitle === "") {
+            modifyTaskModalError.innerText = "Tytuł zadania nie może być pusty";
+        }
+        else if (newTitle === title && newDescription === description && newPriority === priority) {
+            modifyTaskModalError.innerText = "Nie wprowadzono żadnych zmian";
+        }
+        else {
+            try {
+                let task = {
+                    idtask: taskId,
+                    title: newTitle,
+                    description: newDescription,
+                    priority: newPriority
+                }
+                const result = await fetch("http://localhost:8000/modify-task", {
+                    method: "post",
+                    body: JSON.stringify(task),
+                    headers: {
+                        "Content-Type": "application/json"
+                    }
+                });
+                const data = await result.json();
+                if (data.status === "ok") {
+                    modifyTaskModal.innerText = "Zmodyfikowano zadanie";
+                    setTimeout(() => {
+                        modifyTaskModal.classList.add('hidden');
+                        overflow.classList.add('hidden');
+                        window.location.reload();
+                    }, 1000);
+                }
+            }
+            catch (err) {
+                openErrorModal("Błąd", "Nie udało się zmodyfikować zadania");
+            }
+        }
+    });
+
+}
+
+const showeDescription = (div) => {
+    let title = div.querySelector(".task-title").innerText;
+    let description = div.dataset.description;
+    taskInfoSectionTitle.innerText = title;
+    taskInfoSectionDescription.innerText = description;
+    if (description === "" || description === "null") {
+        taskInfoSectionDescription.innerText = "Brak opisu";
+    }
+    taskInfoSectionDescription.classList.remove('hidden');
+}
 
 
 
@@ -254,6 +371,20 @@ addTaskModalConfirmBtn.addEventListener('click', (e) => {
     addTask();
 });
 
+modifyTaskModalConfirmBtn.addEventListener('click', (e) => { });
+
+modifyTaskModalCloseBtn.addEventListener('click', () => {
+    modifyTaskModal.classList.add("hidden");
+    overflow.classList.add("hidden");
+    document.body.style.overflow = "auto";
+});
+
+errorModalCloseBtn.addEventListener('click', () => {
+    errorModal.classList.add("hidden");
+    overflow.classList.add("hidden");
+    document.body.style.overflow = "auto";
+});
+
 
 tasksUnfinishedList.addEventListener('click', function (e) {
     let target = e.target;
@@ -261,7 +392,7 @@ tasksUnfinishedList.addEventListener('click', function (e) {
     if (target.classList.contains("task-unfinished")) {
         console.log("Klikneliśmy diva z zadaniem");
         let id = target.dataset.taskid;
-        console.log("id zadania: " + id);
+        showeDescription(target);
     }
     // Check if we click delete button on the div
     if (target.classList.contains("deleteBtn")) {
@@ -279,16 +410,16 @@ tasksUnfinishedList.addEventListener('click', function (e) {
             iterations: 1,
         }
         div.animate(goLeft, Timing);
-        // setTimeout(function () {
-        //     removeTask(index, "unfinished");
-        // }, 1100);
+        setTimeout(function () {
+            deleteTask(id);
+        }, 900);
     }
 
     // Check if we click add to finished button on the div
     if (target.classList.contains("addBtn")) {
         console.log("Klikneliśmy przycisk dodaj do zakończonych");
         let div = target.parentElement;
-        let index = Array.from(div.parentElement.children).indexOf(div);
+        let taskId = div.dataset.taskid;
         let goDown = [
             { background: 'linear-gradient(to right bottom,#008000, #38b000)' },
             { transform: 'rotate(0) scale(0.9)', background: 'linear-gradient(to right bottom, #008000, #38b000)' },
@@ -301,9 +432,9 @@ tasksUnfinishedList.addEventListener('click', function (e) {
         }
 
         div.animate(goDown, Timing);
-        // setTimeout(function () {
-        //     addTaskToFinished(index);
-        // }, 1100);
+        setTimeout(function () {
+            checkTaskAsDone(div);
+        }, 900);
 
     }
 
@@ -311,6 +442,7 @@ tasksUnfinishedList.addEventListener('click', function (e) {
     if (target.classList.contains("modifyBtn")) {
         let div = target.parentElement;
         let id = div.dataset.taskid;
+        openModifyTaskModal(div)
         //modifyTask(index);
     }
 });
