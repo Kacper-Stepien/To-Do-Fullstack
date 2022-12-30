@@ -4,6 +4,15 @@ const router = express.Router();
 const bcrypt = require('bcryptjs');
 const cookieParser = require("cookie-parser");
 
+function escapeHtml(text) {
+    return text
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
 router.post("/", (request, response) => {
     let login = request.cookies.user;
     if (!login) {
@@ -13,10 +22,10 @@ router.post("/", (request, response) => {
         try {
             let user_id = db.query("SELECT iduser FROM users WHERE login = ?", [login]);
             user_id = user_id[0].iduser;
-            let title = request.body.title;
-            let description = request.body.description;
-            let priority = request.body.priority;
-            let finished = request.body.finished;
+            let title = escapeHtml(request.body.title);
+            let description = escapeHtml(request.body.description);
+            let priority = escapeHtml(request.body.priority);
+            let finished = escapeHtml(request.body.finished);
             let date_added = request.body.date_added;
 
             let sql = `INSERT INTO tasks(title, description, priority, finished, user_id, added_date) VALUES(?, ?, ?, ?, ?, ?)`;

@@ -106,7 +106,6 @@ const getUserData = async () => {
         }
     });
     const data = await result.json();
-    console.log(data);
     return data;
 }
 
@@ -129,6 +128,7 @@ const displayInfoAboutUser = (data) => {
 }
 
 const displayTasksUncompleted = (data) => {
+    tasksUnfinishedList.innerHTML = "";
     let tasks = data.tasksUnfinished;
     if (tasks.length === 0) {
         tasksUnfinishedList.innerHTML = "<h2>Brak zadań</h2>"
@@ -155,7 +155,8 @@ const displayTasksUncompleted = (data) => {
 }
 
 const displayTaskCompleted = (data) => {
-    let tasks = data.tasksFinished
+    tasksFinishedList.innerHTML = "";
+    let tasks = data.tasksFinished;
     if (tasks.length === 0) {
         tasksFinishedList.innerHTML = "<h2>Brak zadań ukończonych</h2>"
     }
@@ -208,7 +209,8 @@ const addTask = async () => {
         if (data.status === "ok") {
             addTaskModal.classList.add("hidden");
             overflow.classList.add("hidden");
-            window.location.reload();
+            const data = await getUserData();
+            displayTasksUncompleted(data);
         }
         else {
             openErrorModal("Błąd", "Nie udało się dodać zadania");
@@ -233,7 +235,9 @@ const checkTaskAsDone = async (taskId) => {
 
         const data = await result.json();
         if (data.status === "ok") {
-            window.location.reload();
+            let dataUser = await getUserData();
+            displayTasksUncompleted(dataUser);
+            displayTaskCompleted(dataUser);
         }
         else {
             openErrorModal("Błąd", "Nie udało się oznaczyć zadania jako ukończone");
@@ -255,7 +259,9 @@ const deleteTask = async (taskId) => {
         });
         const data = await result.json();
         if (data.status === "ok") {
-            window.location.reload();
+            let dataUser = await getUserData();
+            displayTasksUncompleted(dataUser);
+            displayTaskCompleted(dataUser);
         }
         else {
             openErrorModal("Błąd", "Nie udało się usunąć zadania");

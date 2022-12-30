@@ -4,12 +4,21 @@ const router = express.Router();
 const bcrypt = require('bcryptjs');
 const cookieParser = require("cookie-parser");
 
+function escapeHtml(text) {
+    return text
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
 router.post("/", (request, response) => {
     try {
-        let taskId = request.body.idtask;
-        let title = request.body.title;
-        let description = request.body.description;
-        let priority = request.body.priority;
+        let taskId = escapeHtml(request.body.idtask);
+        let title = escapeHtml(request.body.title);
+        let description = escapeHtml(request.body.description);
+        let priority = escapeHtml(request.body.priority);
         let modifyDate = request.body.modifyDate;
 
         db.query("UPDATE tasks SET title = ?, description = ?, priority = ?, last_modify_date = ? WHERE idtask = ?", [title, description, priority, modifyDate, taskId]);

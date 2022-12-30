@@ -1,10 +1,10 @@
 const express = require('express');
-require('dotenv').config(); // Dzięki temu możemy używać zmiennych środowiskowych z pliku .env
-const path = require('path');   // Dzięki temu możemy używać ścieżek do plików
-const bodyParser = require("body-parser");
-const cookieParser = require("cookie-parser");
+require('dotenv').config();                        // We can use environment variables from .env file
+const path = require('path');                      // We can use path to files
+const bodyParser = require("body-parser");         // We can use body-parser to parse data from forms
+const cookieParser = require("cookie-parser");     // We can use cookie-parser to parse cookies
 
-// Routers
+// Routers - we can use them to handle requests
 const registerRouter = require('./routes/register-router');
 const loginRouter = require('./routes/login-router');
 const appRouter = require('./routes/app-router');
