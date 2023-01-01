@@ -3,6 +3,7 @@ const db = require('../routes/db-config');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
 const cookieParser = require("cookie-parser");
+const session = require('express-session');
 
 function escapeHtml(text) {
     return text
@@ -14,12 +15,14 @@ function escapeHtml(text) {
 }
 
 router.post("/", (request, response) => {
-    let login = request.cookies.user;
-    if (!login) {
+    // let login = request.cookies.user;
+    let sessionId = request.cookies.sessionId;
+    if (!sessionId) {
         response.status(401).json({ status: "error", message: "Not logged in" });
     }
     else {
         try {
+            let login = request.session.user.login;
             let user_id = db.query("SELECT iduser FROM users WHERE login = ?", [login]);
             user_id = user_id[0].iduser;
             let title = escapeHtml(request.body.title);

@@ -1,8 +1,5 @@
+// Variables
 const pageErrorModal = document.querySelector('.page-error');
-// const addTaskTitle = document.querySelector('.modal-title');
-// const addTaskDescription = document.querySelector('.modal-textarea');
-// const addTaskBtn = document.querySelector('.modal-add-task');
-// const addTaskEmptyTitleError = document.querySelector('.emptyTitleError');
 const logoutBtn = document.getElementById('logout-btn');
 const addTaskBtn = document.getElementById('add-task-btn');
 const deleteAllTasksBtn = document.getElementById('delete-all-tasks-btn');
@@ -28,7 +25,6 @@ const taskInfoSectioDate = document.querySelector('.task-info-section-date');
 const taskInfoSectionDescription = document.querySelector('.task-info-section-description');
 
 const linkToAuthorPage = document.getElementById('link-to-contact');
-
 
 // Modals
 const errorModal = document.getElementById('error-modal');
@@ -71,9 +67,9 @@ let Timing = {
     iterations: 1,
 }
 
-function addDate() {
+function getDate() {
     let date = new Date();
-    date = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDay() + 25} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
+    date = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDay() + 1} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
     return date;
 }
 
@@ -114,9 +110,6 @@ const displayInfoAboutUser = (data) => {
     let user = data.user[0];
     let tasksFinished = data.tasksFinished;
     let tasksUnfinished = data.tasksUnfinished;
-    console.log(user);
-    console.log(tasksFinished);
-    console.log(tasksUnfinished);
     userLogin.innerText = user.login;
     userName.innerText = user.name + " " + user.surname;
     tasksDone.innerText = tasksFinished.length;
@@ -130,6 +123,7 @@ const displayInfoAboutUser = (data) => {
 const displayTasksUncompleted = (data) => {
     tasksUnfinishedList.innerHTML = "";
     let tasks = data.tasksUnfinished;
+    tasks = tasks.reverse();
     if (tasks.length === 0) {
         tasksUnfinishedList.innerHTML = "<h2>Brak zadań</h2>"
     }
@@ -157,6 +151,7 @@ const displayTasksUncompleted = (data) => {
 const displayTaskCompleted = (data) => {
     tasksFinishedList.innerHTML = "";
     let tasks = data.tasksFinished;
+    tasks = tasks.reverse();
     if (tasks.length === 0) {
         tasksFinishedList.innerHTML = "<h2>Brak zadań ukończonych</h2>"
     }
@@ -186,7 +181,7 @@ const addTask = async () => {
     }
     else {
         addTaskModalError.innerText = "";
-        let date = addDate();
+        let date = getDate();
 
         let task = {
             title: addTaskModalTitle.value,
@@ -203,14 +198,12 @@ const addTask = async () => {
                 "Content-Type": "application/json"
             }
         });
-
         const data = await result.json();
-        console.log(data);
         if (data.status === "ok") {
             addTaskModal.classList.add("hidden");
             overflow.classList.add("hidden");
             const data = await getUserData();
-            displayTasksUncompleted(data);
+            window.location.reload();
         }
         else {
             openErrorModal("Błąd", "Nie udało się dodać zadania");
@@ -222,9 +215,8 @@ const checkTaskAsDone = async (taskId) => {
     try {
         let task = {
             idtask: taskId,
-            modifyDate: addDate()
+            modifyDate: getDate()
         }
-        console.log(task);
         const result = await fetch("http://localhost:8000/check-task-as-done", {
             method: "post",
             body: JSON.stringify(task),
@@ -236,8 +228,7 @@ const checkTaskAsDone = async (taskId) => {
         const data = await result.json();
         if (data.status === "ok") {
             let dataUser = await getUserData();
-            displayTasksUncompleted(dataUser);
-            displayTaskCompleted(dataUser);
+            window.location.reload();
         }
         else {
             openErrorModal("Błąd", "Nie udało się oznaczyć zadania jako ukończone");
@@ -260,8 +251,7 @@ const deleteTask = async (taskId) => {
         const data = await result.json();
         if (data.status === "ok") {
             let dataUser = await getUserData();
-            displayTasksUncompleted(dataUser);
-            displayTaskCompleted(dataUser);
+            window.location.reload();
         }
         else {
             openErrorModal("Błąd", "Nie udało się usunąć zadania");
@@ -292,7 +282,7 @@ const openModifyTaskModal = (div) => {
         let newTitle = modifyTaskModalTitle.value;
         let newDescription = modifyTaskModalDescription.value;
         let newPriority = modifyTaskModalPriority.value;
-        let dateModified = addDate();
+        let dateModified = getDate();
 
         if (newTitle === "") {
             modifyTaskModalError.innerText = "Tytuł zadania nie może być pusty";
@@ -337,37 +327,17 @@ const openModifyTaskModal = (div) => {
 const showeDescription = (div) => {
     let title = div.querySelector(".task-title").innerText;
     let description = div.dataset.description;
+    let dateAdded = div.querySelector(".task-date").innerText;
+    let dateModified = div.querySelector(".task-last-edit").innerText;
     taskInfoSectionTitle.innerText = title;
+    taskInfoSectioDate.innerHTML = dateModified || dateAdded;
     taskInfoSectionDescription.innerText = description;
+
     if (description === "" || description === "null") {
         taskInfoSectionDescription.innerText = "Brak opisu";
     }
     taskInfoSectionDescription.classList.remove('hidden');
 }
-
-
-
-
-// Main program - checking if user is logged in
-const checkIfUserIsLoggedIn = async () => {
-    const response = await fetch("http://localhost:8000/user-logged-in", {
-        method: "get",
-        headers: {
-            "Content-Type": "application/json"
-        }
-    });
-    const data = await response.json();
-    if (data.status === "error") {
-        window.location.href = "http://localhost:8000/login";
-    } else {
-        const data = await getUserData();
-        displayInfoAboutUser(data);
-        displayTasksUncompleted(data);
-        displayTaskCompleted(data);
-        addDate();
-    }
-}
-
 
 // Event listeners
 logoutBtn.addEventListener('click', async () => {
@@ -409,7 +379,6 @@ overflow.addEventListener('click', () => {
     document.body.style.overflow = "auto";
 });
 
-
 addTaskModalConfirmBtn.addEventListener('click', (e) => {
     e.preventDefault();
     addTask();
@@ -424,11 +393,12 @@ modifyTaskModalCloseBtn.addEventListener('click', () => {
 });
 
 errorModalCloseBtn.addEventListener('click', () => {
+    errorModalTitle.innerText = title;
+    errorModalDescription.innerText = description;
     errorModal.classList.add("hidden");
     overflow.classList.add("hidden");
     document.body.style.overflow = "auto";
 });
-
 
 tasksUnfinishedList.addEventListener('click', function (e) {
     let target = e.target;
@@ -487,5 +457,25 @@ tasksFinishedList.addEventListener('click', function (e) {
 linkToAuthorPage.addEventListener('click', () => {
     window.location.href = "http://localhost:8000/author";
 });
+
+
+// Main program - checking if user is logged in
+const checkIfUserIsLoggedIn = async () => {
+    const response = await fetch("http://localhost:8000/user-logged-in", {
+        method: "get",
+        headers: {
+            "Content-Type": "application/json"
+        }
+    });
+    const data = await response.json();
+    if (data.status === "error") {
+        window.location.href = "http://localhost:8000/login";
+    } else {
+        const data = await getUserData();
+        displayInfoAboutUser(data);
+        displayTasksUncompleted(data);
+        displayTaskCompleted(data);
+    }
+}
 
 checkIfUserIsLoggedIn();

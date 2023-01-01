@@ -1,4 +1,5 @@
 const express = require('express');
+const session = require('express-session');
 const db = require('../routes/db-config');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
@@ -10,14 +11,14 @@ router.post("/", (request, response) => {
 
     try {
         const results = db.query("SELECT * FROM users WHERE login = ?", [login]);
-        console.log(results);
         if (results.length == 0) {
             response.status(401).json({ status: "error", message: "Wrong login" });
         }
         else {
             let user = results[0];
             if (bcrypt.compareSync(password, user.password)) {
-                response.cookie("user", user.login, { maxAge: 3600000 });   // max age in miliseconds - 1 hour 
+                request.session.user = { login: login };    // save user in session
+                response.cookie('sessionId', request.session.id, { maxAge: 3600000 });  // max age in miliseconds - 1 hour
                 response.status(200).json({ status: "ok", message: "Logged in" });
             }
             else {

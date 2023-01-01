@@ -295,7 +295,8 @@ high
     font-size: 1.6rem;
     box-shadow: 0px 10px 25px rgba(0, 0, 0, 0.2);
     padding: 1rem;
-    overflow-y: auto;
+    max-height: 80%;
+    overflow-y: scroll;
 
 }
 
