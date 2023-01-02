@@ -6,9 +6,7 @@ const cookieParser = require("cookie-parser");
 const session = require('express-session');
 
 router.post("/", (request, response) => {
-    console.log("Weszło do delete-all-tasks-router");
     let sessionId = request.cookies.sessionId;
-    console.log(`Session ID: ${sessionId}`);
     if (!sessionId) {
         response.status(401).json({ status: "error", message: "Not logged in" });
     }

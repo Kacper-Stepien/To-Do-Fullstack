@@ -111,7 +111,7 @@ i {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 2rem;
+    margin-bottom: 1rem;
 }
 
 .task-section-header h2 {
@@ -154,6 +154,20 @@ i {
     color: white;
 }
 
+
+.select-priority,
+.select-priority:focus,
+.select-priority:active {
+    border-radius: 8px;
+    border: none;
+    outline: none;
+    margin-bottom: 2rem !important;
+}
+
+
+.select-priority:hover {
+    cursor: pointer;
+}
 
 .task {
     background: linear-gradient(to right bottom, var(--dark-blue-2), var(--light-blue-1));

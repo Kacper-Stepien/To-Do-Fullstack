@@ -16,6 +16,8 @@ const tasksUnfinishedList = document.querySelector('.tasks-unfinished');
 
 const deleteAllUncompletedTaskBtn = document.querySelector('.deleteAllTaskBtn');
 
+const selectPriority = document.getElementById('select-priority');
+
 const allUnfinishedTaskShowedOnPage = document.getElementsByClassName('.task-unfinished');
 const allFinishedTasksShowedOnPage = document.getElementsByClassName('.task-finished');
 
@@ -97,6 +99,22 @@ function openErrorModal(title, description) {
     document.body.style.overflow = "hidden";
 }
 
+const getPriorityValueFromLocalStorage = () => {
+    let priority = localStorage.getItem("ToDo-priority") || "all";
+    return priority;
+};
+
+const changeSelectPriorityValue = () => {
+    let priority = getPriorityValueFromLocalStorage();
+    if (priority) {
+        selectPriority.value = priority;
+    }
+    else {
+        localStorage.setItem("ToDo-priority", "all");
+        selectPriority.value = "all";
+    }
+};
+
 // Function get data about user and his tasks from database - return object with user data and tasks data
 const getUserData = async () => {
     const result = await fetch("http://localhost:8000/user-info", {
@@ -125,29 +143,55 @@ const displayInfoAboutUser = (data) => {
 }
 
 const displayTasksUncompleted = (data) => {
+    let expectedPriority = getPriorityValueFromLocalStorage();
+    console.log(expectedPriority);
     tasksUnfinishedList.innerHTML = "";
     let tasks = data.tasksUnfinished;
     tasks = tasks.reverse();
+    let displayedCount = 0;
     if (tasks.length === 0) {
         tasksUnfinishedList.innerHTML = "<h2>Brak zadań</h2>"
     }
     else {
         for (let i = 0; i < tasks.length; i++) {
             let priority = tasks[i].priority;
-            let addedDate = formatDateFromDataBase(tasks[i].added_date);
-            let modifyDate = tasks[i].last_modify_date ? formatDateFromDataBase(tasks[i].last_modify_date) : "";
+            if (expectedPriority == 'all') {
+                let addedDate = formatDateFromDataBase(tasks[i].added_date);
+                let modifyDate = tasks[i].last_modify_date ? formatDateFromDataBase(tasks[i].last_modify_date) : "";
 
-            let task = `<div class="task task-unfinished ${priority}" data-taskid="${tasks[i].idtask}" data-description="${tasks[i].description}" data-priority="${tasks[i].priority}">` +
-                `<button class="btn taskBtn addBtn"> <i class="fa-solid fa-check"></i></button>` +
-                `<button class="btn taskBtn modifyBtn"> <i class="fa-solid fa-gear"></i></button >` +
-                `<button class="btn taskBtn deleteBtn"> <i class="fa-solid fa-trash-can"></i></button>` +
-                `<div class="task-info"> ` +
-                `<div class="task-title">${tasks[i].title}</div > ` +
-                `<div class="task-dates"> ` +
-                `<div class="task-date">${addedDate}</div > ` +
-                `<div class="task-last-edit">${modifyDate}</div > </div ></div ></div >`;
+                let task = `<div class="task task-unfinished ${priority}" data-taskid="${tasks[i].idtask}" data-description="${tasks[i].description}" data-priority="${tasks[i].priority}">` +
+                    `<button class="btn taskBtn addBtn"> <i class="fa-solid fa-check"></i></button>` +
+                    `<button class="btn taskBtn modifyBtn"> <i class="fa-solid fa-gear"></i></button >` +
+                    `<button class="btn taskBtn deleteBtn"> <i class="fa-solid fa-trash-can"></i></button>` +
+                    `<div class="task-info"> ` +
+                    `<div class="task-title">${tasks[i].title}</div > ` +
+                    `<div class="task-dates"> ` +
+                    `<div class="task-date">${addedDate}</div > ` +
+                    `<div class="task-last-edit">${modifyDate}</div > </div ></div ></div >`;
 
-            tasksUnfinishedList.innerHTML += task.trim();
+                tasksUnfinishedList.innerHTML += task.trim();
+                displayedCount++;
+            }
+            else if (priority === expectedPriority) {
+                let addedDate = formatDateFromDataBase(tasks[i].added_date);
+                let modifyDate = tasks[i].last_modify_date ? formatDateFromDataBase(tasks[i].last_modify_date) : "";
+
+                let task = `<div class="task task-unfinished ${priority}" data-taskid="${tasks[i].idtask}" data-description="${tasks[i].description}" data-priority="${tasks[i].priority}">` +
+                    `<button class="btn taskBtn addBtn"> <i class="fa-solid fa-check"></i></button>` +
+                    `<button class="btn taskBtn modifyBtn"> <i class="fa-solid fa-gear"></i></button >` +
+                    `<button class="btn taskBtn deleteBtn"> <i class="fa-solid fa-trash-can"></i></button>` +
+                    `<div class="task-info"> ` +
+                    `<div class="task-title">${tasks[i].title}</div > ` +
+                    `<div class="task-dates"> ` +
+                    `<div class="task-date">${addedDate}</div > ` +
+                    `<div class="task-last-edit">${modifyDate}</div > </div ></div ></div >`;
+
+                tasksUnfinishedList.innerHTML += task.trim();
+                displayedCount++;
+            }
+        }
+        if (displayedCount === 0) {
+            tasksUnfinishedList.innerHTML = "<h2>Brak zadań</h2>"
         }
     }
 }
@@ -207,6 +251,7 @@ const addTask = async () => {
             addTaskModal.classList.add("hidden");
             overflow.classList.add("hidden");
             const data = await getUserData();
+            localStorage.setItem("ToDo-priority", "all");
             window.location.reload();
         }
         else {
@@ -404,6 +449,13 @@ deleteAllUncompletedTaskBtn.addEventListener('click', () => {
     });
 });
 
+selectPriority.addEventListener('change', () => {
+    let priority = selectPriority.value;
+    localStorage.setItem("ToDo-priority", priority);
+    window.location.reload();
+});
+
+
 addTaskModalCloseBtn.addEventListener('click', () => {
     addTaskModal.classList.add("hidden");
     overflow.classList.add("hidden");
@@ -517,6 +569,7 @@ const checkIfUserIsLoggedIn = async () => {
     if (data.status === "error") {
         window.location.href = "http://localhost:8000/login";
     } else {
+        changeSelectPriorityValue();
         const data = await getUserData();
         displayInfoAboutUser(data);
         displayTasksUncompleted(data);
