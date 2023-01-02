@@ -25,6 +25,7 @@ app.use('/css', express.static(__dirname + '/public/css'));
 app.use('/img', express.static(__dirname + '/public/img'));
 app.use('/views', express.static(__dirname + '/views'));
 app.use('/routes', express.static(__dirname + '/routes'));
+app.use('/controllers', express.static(__dirname + '/controllers'));
 
 app.use(cookieParser());                    // We can use cookie-parser to parse cookies
 
@@ -64,7 +65,6 @@ app.get('/author', (req, res) => {
     res.sendFile(__dirname + '/public/author.html');
 })
 
-// app.use("/app", appRouter);
 
 app.use("/create-user", registerRouter);
 

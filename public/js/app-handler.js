@@ -106,9 +106,8 @@ const getPriorityValueFromLocalStorage = () => {
 
 const changeSelectPriorityValue = () => {
     let priority = getPriorityValueFromLocalStorage();
-    if (priority) {
+    if (priority)
         selectPriority.value = priority;
-    }
     else {
         localStorage.setItem("ToDo-priority", "all");
         selectPriority.value = "all";
@@ -143,11 +142,10 @@ const displayInfoAboutUser = (data) => {
 }
 
 const displayTasksUncompleted = (data) => {
-    let expectedPriority = getPriorityValueFromLocalStorage();
-    console.log(expectedPriority);
     tasksUnfinishedList.innerHTML = "";
     let tasks = data.tasksUnfinished;
     tasks = tasks.reverse();
+    let expectedPriority = getPriorityValueFromLocalStorage();
     let displayedCount = 0;
     if (tasks.length === 0) {
         tasksUnfinishedList.innerHTML = "<h2>Brak zadań</h2>"
@@ -380,9 +378,10 @@ const openModifyTaskModal = (div) => {
                 });
                 const data = await result.json();
                 if (data.status === "ok") {
-                    modifyTaskModal.innerText = "Zmodyfikowano zadanie";
+                    modifyTaskModal.classList.add('hidden');
+                    openErrorModal("Sukces", "Zadanie zostało zmodyfikowane");
                     setTimeout(() => {
-                        modifyTaskModal.classList.add('hidden');
+                        errorModal.classList.add('hidden');
                         overflow.classList.add('hidden');
                         window.location.reload();
                     }, 1000);

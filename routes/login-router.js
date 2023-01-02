@@ -4,26 +4,19 @@ const db = require('../routes/db-config');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
 const cookieParser = require("cookie-parser");
+const logInUser = require('../controllers/login-controller');
 
 router.post("/", (request, response) => {
-    let login = request.body.login;
-    let password = request.body.password;
+    let userLogin = request.body.login;
+    let userPassword = request.body.password;
 
     try {
-        const results = db.query("SELECT * FROM users WHERE login = ?", [login]);
-        if (results.length == 0) {
+        const results = db.query("SELECT * FROM users WHERE login = ?", [userLogin]);
+        if (results.length == 0)
             response.status(401).json({ status: "error", message: "Wrong login" });
-        }
         else {
             let user = results[0];
-            if (bcrypt.compareSync(password, user.password)) {
-                request.session.user = { login: login };    // save user in session
-                response.cookie('sessionId', request.session.id, { maxAge: 3600000 });  // max age in miliseconds - 1 hour
-                response.status(200).json({ status: "ok", message: "Logged in" });
-            }
-            else {
-                response.status(401).json({ status: "error", message: "Wrong password" });
-            }
+            logInUser(request, response, user, userLogin, userPassword);
         }
     }
     catch (error) {

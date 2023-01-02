@@ -1,19 +1,11 @@
 const express = require('express');
-const db = require('../routes/db-config');
 const router = express.Router();
-const bcrypt = require('bcryptjs');
 const cookieParser = require("cookie-parser");
 const session = require('express-session');
+const sessionExists = require('../controllers/functions/check-if-session-exists');
 
 router.get("/", (request, response) => {
-    let sessionId = request.cookies.sessionId;
-    if (!sessionId) {
-        response.status(401).json({ status: "error", message: "Not logged in" });
-    }
-    else if (sessionId != request.session.id) {
-        response.status(401).json({ status: "error", message: "Not logged in" });
-    }
-    else if (!request.session.user) {
+    if (!sessionExists(request, response)) {
         response.status(401).json({ status: "error", message: "Not logged in" });
     }
     else {
