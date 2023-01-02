@@ -15,6 +15,7 @@ const addTaskRouter = require('./routes/add-task-router');
 const checkTaskAsDoneRouter = require('./routes/check-task-as-done-router');
 const deleteTaskRouter = require('./routes/delete-task-router');
 const modifyTaskRouter = require('./routes/edit-task-router');
+const deleteAllTasksRouter = require('./routes/delete-all-tasks-router');
 
 const app = express();
 const port = process.env.PORT;
@@ -82,6 +83,8 @@ app.use('/check-task-as-done', checkTaskAsDoneRouter);
 app.use('/delete-task', deleteTaskRouter);
 
 app.use('/modify-task', modifyTaskRouter);
+
+app.use('/delete-all-tasks', deleteAllTasksRouter);
 
 
 app.listen(port, () => {

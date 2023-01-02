@@ -47,6 +47,10 @@ const modifyTaskModalTitle = document.getElementById('modify-task-modal--title')
 const modifyTaskModalDescription = document.getElementById('modify-task-modal--text');
 const modifyTaskModalPriority = document.getElementById('modify-task-modal--priority');
 const modifyTaskModalConfirmBtn = document.getElementById('modify-task-modal--btn');
+
+const deleteAllTasksModal = document.getElementById('delete-all-tasks-modal');
+const deleteAllTasksModalCloseBtn = document.getElementById('close-delete-all-tasks-modal');
+const deleteAllTasksModalConfirmBtn = document.getElementById('delete-all-tasks-modal--btn');
 const overflow = document.querySelector('.overflow');
 
 // Animations
@@ -262,6 +266,29 @@ const deleteTask = async (taskId) => {
     }
 }
 
+const deleteAllTasks = async () => {
+    try {
+        const result = await fetch("http://localhost:8000/delete-all-tasks", {
+            method: "post",
+            body: JSON.stringify({}),
+            headers: {
+                "Content-Type": "application/json"
+            }
+        });
+        const data = await result.json();
+        if (data.status === "ok") {
+            window.location.reload();
+            openErrorModal("Sukces", "Wszystkie zadania zostały usunięte");
+        }
+        else {
+            openErrorModal("Błąd", "Nie udało się usunąć wszystkich zadań");
+        }
+    }
+    catch (error) {
+        openErrorModal("Błąd", "Nie udało się usunąć wszystkich zadań");
+    }
+}
+
 const openModifyTaskModal = (div) => {
     let taskId = div.dataset.taskid;
     let title = div.querySelector(".task-title").innerText;
@@ -365,6 +392,18 @@ addTaskBtn.addEventListener('click', () => {
     document.body.style.overflow = "hidden";
 });
 
+deleteAllUncompletedTaskBtn.addEventListener('click', () => {
+    deleteAllTasksModal.classList.remove("hidden");
+    overflow.classList.remove("hidden");
+    document.body.style.overflow = "hidden";
+    deleteAllTasksModalConfirmBtn.addEventListener('click', () => {
+        deleteAllTasksModal.classList.add("hidden");
+        overflow.classList.add("hidden");
+        document.body.style.overflow = "auto";
+        deleteAllTasks();
+    });
+});
+
 addTaskModalCloseBtn.addEventListener('click', () => {
     addTaskModal.classList.add("hidden");
     overflow.classList.add("hidden");
@@ -375,6 +414,7 @@ overflow.addEventListener('click', () => {
     errorModal.classList.add("hidden");
     addTaskModal.classList.add("hidden");
     modifyTaskModal.classList.add("hidden");
+    deleteAllTasksModal.classList.add("hidden");
     overflow.classList.add("hidden");
     document.body.style.overflow = "auto";
 });
@@ -393,9 +433,15 @@ modifyTaskModalCloseBtn.addEventListener('click', () => {
 });
 
 errorModalCloseBtn.addEventListener('click', () => {
-    errorModalTitle.innerText = title;
-    errorModalDescription.innerText = description;
+    errorModalTitle.innerText = "";
+    errorModalDescription.innerText = "";
     errorModal.classList.add("hidden");
+    overflow.classList.add("hidden");
+    document.body.style.overflow = "auto";
+});
+
+deleteAllTasksModalCloseBtn.addEventListener('click', () => {
+    deleteAllTasksModal.classList.add("hidden");
     overflow.classList.add("hidden");
     document.body.style.overflow = "auto";
 });
