@@ -4,10 +4,11 @@ const cookieParser = require("cookie-parser");
 const session = require('express-session');
 const escapeHtml = require("./functions/escape-html");
 const sessionExists = require('./functions/check-if-session-exists');
+const taskBelongsToUser = require('./functions/check-if-task-belongs-to-user');
 
 exports.addTask = (request, response) => {
     // let login = request.cookies.user;
-    if (!sessionExists) {
+    if (!sessionExists(request, response)) {
         response.status(401).json({ status: "error", message: "Unauthorized" });
     }
     else {
@@ -34,55 +35,87 @@ exports.addTask = (request, response) => {
 };
 
 exports.editTask = (request, response) => {
-    if (!sessionExists) {
+    let ok = true;
+    if (!sessionExists(request, response)) {
         response.status(401).json({ status: "error", message: "Unauthorized" });
+        ok = false;
     }
-    try {
-        let taskId = escapeHtml(request.body.idtask);
-        let title = escapeHtml(request.body.title);
-        let description = escapeHtml(request.body.description);
-        let priority = escapeHtml(request.body.priority);
-        let modifyDate = request.body.modifyDate;
+    if (ok) {
+        if (!taskBelongsToUser(request, response)) {
+            response.status(401).json({ status: "error", message: "Unauthorized" });
+            ok = false;
+        }
+    }
+    if (ok) {
+        try {
+            let taskId = escapeHtml(request.body.idtask);
+            console.log(`taskId: ${taskId}`);
+            let title = escapeHtml(request.body.title);
+            let description = escapeHtml(request.body.description);
+            let priority = escapeHtml(request.body.priority);
+            let modifyDate = request.body.modifyDate;
 
-        db.query("UPDATE tasks SET title = ?, description = ?, priority = ?, last_modify_date = ? WHERE idtask = ?", [title, description, priority, modifyDate, taskId]);
-        response.status(200).json({ status: "ok", message: "Task modified" });
-    }
-    catch (error) {
-        response.status(500).json({ status: "error", message: "Internal error" });
+            db.query("UPDATE tasks SET title = ?, description = ?, priority = ?, last_modify_date = ? WHERE idtask = ?", [title, description, priority, modifyDate, taskId]);
+            response.status(200).json({ status: "ok", message: "Task modified" });
+        }
+        catch (error) {
+            response.status(500).json({ status: "error", message: "Internal error" });
+        }
     }
 };
 
 exports.checkTaskAsDone = (request, response) => {
-    if (!sessionExists) {
+    let ok = true;
+    if (!sessionExists(request, response)) {
         response.status(401).json({ status: "error", message: "Unauthorized" });
+        ok = false;
     }
-    let taskId = request.body.idtask;
-    let modifyDate = request.body.modifyDate;
-    try {
-        db.query("UPDATE tasks SET finished = 1, last_modify_date = ? WHERE idtask = ?", [modifyDate, taskId]);
-        response.status(200).json({ status: "ok", message: "Task updated" });
+    if (ok) {
+        if (!taskBelongsToUser(request, response)) {
+            response.status(401).json({ status: "error", message: "Unauthorized" });
+            ok = false;
+        }
     }
-    catch (error) {
-        response.status(500).json({ status: "error", message: "Database error" });
+    if (ok) {
+        try {
+            let taskId = request.body.idtask;
+            let modifyDate = request.body.modifyDate;
+            db.query("UPDATE tasks SET finished = 1, last_modify_date = ? WHERE idtask = ?", [modifyDate, taskId]);
+            response.status(200).json({ status: "ok", message: "Task updated" });
+        }
+        catch (error) {
+            response.status(500).json({ status: "error", message: "Database error" });
+        }
     }
 };
 
 exports.deleteTask = (request, response) => {
-    if (!sessionExists) {
+    let ok = true;
+    if (!sessionExists(request, response)) {
         response.status(401).json({ status: "error", message: "Unauthorized" });
+        ok = false;
     }
-    let taskId = request.body.idtask;
-    try {
-        db.query("DELETE FROM tasks WHERE idtask = ?", [taskId]);
-        response.status(200).json({ status: "ok", message: "Task deleted" });
+    //Check if task belongs to user
+    if (ok) {
+        if (!taskBelongsToUser(request, response)) {
+            response.status(401).json({ status: "error", message: "Unauthorized" });
+            ok = false;
+        }
     }
-    catch (error) {
-        response.status(500).json({ status: "error", message: "Internal Error" });
+    if (ok) {
+        let taskId = request.body.idtask;
+        try {
+            db.query("DELETE FROM tasks WHERE idtask = ?", [taskId]);
+            response.status(200).json({ status: "ok", message: "Task deleted" });
+        }
+        catch (error) {
+            response.status(500).json({ status: "error", message: "Internal Error" });
+        }
     }
 };
 
 exports.deleteAllTasks = (request, response) => {
-    if (!sessionExists) {
+    if (!sessionExists(request, response)) {
         response.status(401).json({ status: "error", message: "Unauthorized" });
     }
     try {

@@ -75,7 +75,7 @@ let Timing = {
 
 function getDate() {
     let date = new Date();
-    date = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDay() + 1} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
+    date = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
     return date;
 }
 
@@ -97,6 +97,39 @@ function openErrorModal(title, description) {
     errorModal.classList.remove('hidden');
     overflow.classList.remove('hidden');
     document.body.style.overflow = "hidden";
+}
+
+function closeErrorModal() {
+    errorModalTitle.innerText = "";
+    errorModalDescription.innerText = "";
+    errorModal.classList.add('hidden');
+    overflow.classList.add('hidden');
+    document.body.style.overflow = "auto";
+}
+
+function openAddTaskModal() {
+    addTaskModal.classList.remove("hidden");
+    addTaskModalTitle.value = "";
+    addTaskModalDescription.value = "";
+    overflow.classList.remove("hidden");
+    document.body.style.overflow = "hidden";
+}
+
+function closeAddTaskModal() {
+    addTaskModal.classList.add("hidden");
+    addTaskModalTitle.value = "";
+    addTaskModalDescription.value = "";
+    overflow.classList.add("hidden");
+    document.body.style.overflow = "auto";
+}
+
+function closeModifyTaskModal() {
+    modifyTaskModal.classList.add('hidden');
+    overflow.classList.add('hidden');
+    modifyTaskModalTitle.value = "";
+    modifyTaskModalDescription.value = "";
+    modifyTaskModalError.innerText = "";
+    document.body.style.overflow = "auto";
 }
 
 const getPriorityValueFromLocalStorage = () => {
@@ -245,6 +278,7 @@ const addTask = async () => {
             }
         });
         const data = await result.json();
+        console.log(data);
         if (data.status === "ok") {
             addTaskModal.classList.add("hidden");
             overflow.classList.add("hidden");
@@ -253,6 +287,7 @@ const addTask = async () => {
             window.location.reload();
         }
         else {
+            closeAddTaskModal();
             openErrorModal("Błąd", "Nie udało się dodać zadania");
         }
     }
@@ -264,6 +299,7 @@ const checkTaskAsDone = async (taskId) => {
             idtask: taskId,
             modifyDate: getDate()
         }
+
         const result = await fetch("http://localhost:8000/check-task-as-done", {
             method: "post",
             body: JSON.stringify(task),
@@ -332,17 +368,27 @@ const deleteAllTasks = async () => {
     }
 }
 
+modifyTaskModalConfirmBtn.addEventListener('click', async () => {
+    let taskId = modifyTaskModal.dataset.taskid;
+    let newTitle = modifyTaskModalTitle.value;
+    let newDescription = modifyTaskModalDescription.value;
+    let newPriority = modifyTaskModalPriority.value;
+    let dateModified = getDate();
+});
+
 const openModifyTaskModal = (div) => {
     let taskId = div.dataset.taskid;
+    modifyTaskModal.dataset.taskid = taskId;
     let title = div.querySelector(".task-title").innerText;
     let description = div.dataset.description;
     let priority = div.dataset.priority;
 
     modifyTaskModalTitle.value = title;
     if (description === "" || description === "null")
-        modifyTaskModalDescription.value = "";
+        modifyTaskModalDescription.value = "Brak opisu";
     else
         modifyTaskModalDescription.value = description;
+
     modifyTaskModalPriority.value = priority;
     modifyTaskModal.classList.remove('hidden');
     overflow.classList.remove('hidden');
@@ -362,6 +408,7 @@ const openModifyTaskModal = (div) => {
         }
         else {
             try {
+                let taskId = modifyTaskModal.dataset.taskid;
                 let task = {
                     idtask: taskId,
                     title: newTitle,
@@ -369,6 +416,7 @@ const openModifyTaskModal = (div) => {
                     priority: newPriority,
                     modifyDate: dateModified
                 }
+                console.log(task);
                 const result = await fetch("http://localhost:8000/modify-task", {
                     method: "post",
                     body: JSON.stringify(task),
@@ -384,10 +432,15 @@ const openModifyTaskModal = (div) => {
                         errorModal.classList.add('hidden');
                         overflow.classList.add('hidden');
                         window.location.reload();
-                    }, 1000);
+                    }, 1500);
+                }
+                else {
+                    closeModifyTaskModal();
+                    openErrorModal("Błąd", "Nie udało się zmodyfikować zadania");
                 }
             }
             catch (err) {
+                closeModifyTaskModal();
                 openErrorModal("Błąd", "Nie udało się zmodyfikować zadania");
             }
         }
@@ -429,11 +482,7 @@ logoutBtn.addEventListener('click', async () => {
 });
 
 addTaskBtn.addEventListener('click', () => {
-    addTaskModal.classList.remove("hidden");
-    addTaskModalTitle.value = "";
-    addTaskModalDescription.value = "";
-    overflow.classList.remove("hidden");
-    document.body.style.overflow = "hidden";
+    openAddTaskModal();
 });
 
 deleteAllUncompletedTaskBtn.addEventListener('click', () => {
@@ -456,15 +505,13 @@ selectPriority.addEventListener('change', () => {
 
 
 addTaskModalCloseBtn.addEventListener('click', () => {
-    addTaskModal.classList.add("hidden");
-    overflow.classList.add("hidden");
-    document.body.style.overflow = "auto";
+    closeAddTaskModal();
 });
 
 overflow.addEventListener('click', () => {
-    errorModal.classList.add("hidden");
-    addTaskModal.classList.add("hidden");
-    modifyTaskModal.classList.add("hidden");
+    closeAddTaskModal();
+    closeModifyTaskModal();
+    closeErrorModal();
     deleteAllTasksModal.classList.add("hidden");
     overflow.classList.add("hidden");
     document.body.style.overflow = "auto";
@@ -475,20 +522,14 @@ addTaskModalConfirmBtn.addEventListener('click', (e) => {
     addTask();
 });
 
-modifyTaskModalConfirmBtn.addEventListener('click', (e) => { });
+
 
 modifyTaskModalCloseBtn.addEventListener('click', () => {
-    modifyTaskModal.classList.add("hidden");
-    overflow.classList.add("hidden");
-    document.body.style.overflow = "auto";
+    closeModifyTaskModal();
 });
 
 errorModalCloseBtn.addEventListener('click', () => {
-    errorModalTitle.innerText = "";
-    errorModalDescription.innerText = "";
-    errorModal.classList.add("hidden");
-    overflow.classList.add("hidden");
-    document.body.style.overflow = "auto";
+    closeErrorModal();
 });
 
 deleteAllTasksModalCloseBtn.addEventListener('click', () => {
@@ -530,6 +571,7 @@ tasksUnfinishedList.addEventListener('click', function (e) {
     else if (target.classList.contains("modifyBtn")) {
         let div = target.parentElement;
         let idTask = div.dataset.taskid;
+        console.log("Task id :", idTask);
         openModifyTaskModal(div);
     }
 });

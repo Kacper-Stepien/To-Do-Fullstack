@@ -43,13 +43,13 @@
             <p>Copytight © 2022 <em id="link-to-contact">Kacper Stępień</em>. Wszystkie prawa zastrzeżone.</p>
         </footer>
     </main>
+    <script>
+        const linkToContact = document.getElementById('link-to-contact');
+        linkToContact.addEventListener('click', () => {
+            window.open('http://localhost:8000/author', '_blank');
+        });
+    </script>
 </body>
-<script>
-    const linkToContact = document.getElementById('link-to-contact');
-    linkToContact.addEventListener('click', () => {
-        window.open('http://localhost:8000/author', '_blank');
-    });
-</script>
 
 
 </html>
