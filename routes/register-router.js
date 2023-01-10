@@ -24,8 +24,10 @@ router.post("/", (request, response) => {
         if (result === 'databaseError') {
             response.status(500).send({ status: "error", message: "Internal server error" });
         }
-        console.log("Account created");
-        response.status(200).json({ status: "ok", message: "Added to database" });
+        else {
+            console.log("Account created");
+            response.status(200).json({ status: "ok", message: "Added to database" });
+        }
     }
 });
 

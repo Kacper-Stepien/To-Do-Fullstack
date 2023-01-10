@@ -19,6 +19,7 @@ const deleteAllTasksRouter = require('./routes/delete-all-tasks-router');
 
 const app = express();
 const port = process.env.PORT;
+
 app.use(express.static('public'));               // We can use express.static to serve static files     
 app.use("/js", express.static(__dirname + "/public/js"));
 app.use('/css', express.static(__dirname + '/public/css'));
@@ -41,12 +42,12 @@ app.use(session({
 
 // Configuration body-parser
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
+app.use(bodyParser.json());     // We can use body-parser to parse data from forms
 
 
 // Routes
 app.get('/', (req, res) => {
-    res.sendFile(__dirname + 'public/index.html');
+    res.sendFile(__dirname + 'public/index.html');  // We can use res.sendFile to send a file
 });
 
 app.get('/register', (req, res) => {
@@ -86,7 +87,7 @@ app.use('/modify-task', modifyTaskRouter);
 
 app.use('/delete-all-tasks', deleteAllTasksRouter);
 
-
+// Start the server
 app.listen(port, () => {
     console.log(`Server is up on port ${port}`);
 });

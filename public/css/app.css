@@ -503,6 +503,10 @@ body {
     box-shadow: 0px 25px 25px rgba(0, 0, 0, 0.2);
 }
 
+.empty-title-error {
+    font-size: 1.4rem;
+}
+
 .delete-all-tasks-modal {
     background: linear-gradient(to right bottom, var(--red-1), var(--red-2));
 }

@@ -29,7 +29,6 @@ const validateData = (data) => {
 
     // Check login
     if (!checkInput(login, loginRegex)) {
-        console.log(dataValid);
         return false;
     }
 
@@ -65,7 +64,6 @@ const validateData = (data) => {
 
     return true;
 }
-
 
 function createAccount(data) {
     let login = data.login;

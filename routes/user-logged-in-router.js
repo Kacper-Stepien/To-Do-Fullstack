@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const cookieParser = require("cookie-parser");
 const session = require('express-session');
+const db = require('../routes/db-config');
 const sessionExists = require('../controllers/functions/check-if-session-exists');
 
 router.get("/", (request, response) => {
@@ -15,7 +16,15 @@ router.get("/", (request, response) => {
             }
         });
         let login = request.session.user.login;
-        response.status(200).json({ status: "ok", message: "Logged in", login: login });
+        let ok = true;
+        try {
+            result = db.query("SELECT 1");
+        } catch (err) {
+            ok = false;
+            response.status(500).json({ status: "error", message: "Database error" });
+        }
+        if (ok)
+            response.status(200).json({ status: "ok", message: "Logged in", login: login });
     }
 });
 
