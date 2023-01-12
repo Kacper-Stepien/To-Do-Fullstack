@@ -70,14 +70,6 @@ function checkInput(inputObject, regex) {
     }
 }
 
-function checkIfUsernameIsAvaliable(login) {
-    if (localStorage.getItem(login) === null) {
-        return true;
-    }
-    else {
-        return false;
-    }
-}
 
 function clearErrors() {
     const errors = document.querySelectorAll('.error');
