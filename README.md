@@ -1,9 +1,16 @@
 # To Do
 The To Do app is a simple web application that allows users to create and manage a list of tasks. The app allows users to create an account, add tasks, edit them, delete them, and mark them as completed. When creating tasks, users can assign them a priority of "Low", "Medium", or "High", and tasks are displayed in different colors based on their priority. Users can also choose to display all tasks or only tasks of a certain priority, and this preference is saved in Local Storage. Tasks also have a creation date and a last modification date.
 
+
+## Table of contents
+- [Technologies used in the project](#technologies-used-in-the-project)
+- [Features](#features)
+- [App screenshots](#app-screenshots)
+- [Run app](#run-app)
+
+
 ## Technologies used in the project:
 [![](https://skills.thijs.gg/icons?i=nodejs,express,mysql,js,html,css,&theme=dark)](https://skills.thijs.gg)
-
 
 
 ## Features:
@@ -15,6 +22,22 @@ The To Do app is a simple web application that allows users to create and manage
 - Adding tasks to completed
 - Assigning priorities to tasks: "low importance" "medium importance" "high importance"
 - Selecting tasks to display: all or based on priority, user's selection is saved in local storage.
+
+
+## App screenshots
+### Landing page
+![landing_page](/screens/landing%20page.png)
+### Login page
+![login_page](/screens/login%20page.png)
+### Register page
+![register_page](/screens/register%20page.png)
+### Main page (after logging in)
+![main_page](/screens/main%20page.png)
+### Add new task
+![add_task](/screens/add%20task.png)
+### Modify task
+![modify_task](/screens/modify%20task.png)
+
 
 ## Run App
 To run the application on your computer, you need to follow these steps:
